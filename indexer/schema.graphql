@@ -1,0 +1,67 @@
+type EventsSummary {
+  id: ID!
+  uniswapV3Factory_PoolCreated: [UniswapV3Factory_PoolCreated!]! @derivedFrom(field: "eventsSummary")
+  uniswapV3Factory_PoolCreatedCount: BigInt!
+  uniswapV3Pool_Burn: [UniswapV3Pool_Burn!]! @derivedFrom(field: "eventsSummary")
+  uniswapV3Pool_BurnCount: BigInt!
+  uniswapV3Pool_Mint: [UniswapV3Pool_Mint!]! @derivedFrom(field: "eventsSummary")
+  uniswapV3Pool_MintCount: BigInt!
+  uniswapV3Pool_SetFeeProtocol: [UniswapV3Pool_SetFeeProtocol!]! @derivedFrom(field: "eventsSummary")
+  uniswapV3Pool_SetFeeProtocolCount: BigInt!
+  uniswapV3Pool_Swap: [UniswapV3Pool_Swap!]! @derivedFrom(field: "eventsSummary")
+  uniswapV3Pool_SwapCount: BigInt!
+}
+
+type UniswapV3Factory_PoolCreated {
+  id: ID!
+  token0: String!
+  token1: String!
+  fee: BigInt!
+  tickSpacing: BigInt!
+  pool: String!
+  eventsSummary: String!
+}
+
+type UniswapV3Pool_Burn {
+  id: ID!
+  owner: String!
+  tickLower: BigInt!
+  tickUpper: BigInt!
+  amount: BigInt!
+  amount0: BigInt!
+  amount1: BigInt!
+  eventsSummary: String!
+}
+
+type UniswapV3Pool_Mint {
+  id: ID!
+  sender: String!
+  owner: String!
+  tickLower: BigInt!
+  tickUpper: BigInt!
+  amount: BigInt!
+  amount0: BigInt!
+  amount1: BigInt!
+  eventsSummary: String!
+}
+
+type UniswapV3Pool_SetFeeProtocol {
+  id: ID!
+  feeProtocol0Old: BigInt!
+  feeProtocol1Old: BigInt!
+  feeProtocol0New: BigInt!
+  feeProtocol1New: BigInt!
+  eventsSummary: String!
+}
+
+type UniswapV3Pool_Swap {
+  id: ID!
+  sender: String!
+  recipient: String!
+  amount0: BigInt!
+  amount1: BigInt!
+  sqrtPriceX96: BigInt!
+  liquidity: BigInt!
+  tick: BigInt!
+  eventsSummary: String!
+}
