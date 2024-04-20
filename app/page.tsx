@@ -4,7 +4,7 @@ import { useChat } from 'ai/react';
 import { useState, useEffect, useRef } from 'react';
 
 const networkEndpoints: string[] = [
-  "eth",
+  "ethereum",
   "base",
   "arbitrum",
 ];
@@ -25,7 +25,7 @@ export default function Chat() {
   }, [messages]);
   const [networkEndpoint, setNetworkEndpoint] = useState(networkEndpoints[0]);
   const [contractAddress, setContractAddress] = useState("");
-  const [prompt, setPrompt] = useState("");
+  const [securityData, setSecurityData] = useState("");
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4">
@@ -54,6 +54,23 @@ export default function Chat() {
           <button 
             className="flex-shrink-0 w-1/6 mx-2 bg-orange-500 hover:bg-orange-700 border-orange-500 hover:border-orange-700 text-sm border-4 text-white py-1 px-2 rounded" 
             type="button"
+            onClick={async () => {
+              console.log(contractAddress);
+              const queryParams = new URLSearchParams({
+                contractAddress,
+                networkEndpoint
+              }).toString();
+        
+              const response = await fetch(`api/tokenSecurity?${queryParams}`, {
+                  method: "GET",
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+              });
+              const tokenSecurity = await response.json();
+              console.log(tokenSecurity.data);
+              setSecurityData(JSON.stringify(tokenSecurity.data));
+            }}
             >
             Check
           </button>
@@ -117,8 +134,19 @@ export default function Chat() {
                     className='bg-blue-500 p-2 text-white rounded shadow-xl'
                     disabled={isLoading}
                     onClick={() =>
-                      append({ role: "user", content: "Summarize how to check a crypto project for scams and rugpulls"})
+                      // append({ role: "user", content: "Summarize how to check a crypto project for scams and rugpulls"})
+                      append({ role: "user", content: `Summarize this token security report ${securityData} and explain if this is a scams or rugpulls`})
                     }
+
+                    // onClick={async () => {
+                    //   const response = await fetch ("api/assistant", {
+                    //     method: "POST",
+                    //     headers: {
+                    //       "Content-Type": "application/json"
+                    //     },
+                    //     body: JSON.stringify({securityData}),
+                    //   });
+                    // }}
                   >
                     Summarize your rugcheck analysis
                   </button>
