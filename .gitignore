@@ -154,3 +154,5 @@ yarn-error.log*
 next-env.d.ts
 
 bun.lockb
+
+package-lock.json

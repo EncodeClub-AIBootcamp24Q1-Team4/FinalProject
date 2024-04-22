@@ -3,15 +3,10 @@
 import { useChat } from 'ai/react';
 import { useState, useEffect, useRef } from 'react';
 
-const networkEndpoints: string[] = [
-  "ethereum",
-  "base",
-  "arbitrum",
-];
-const networkEndpointsNumber: string[] = [
-  "1",
-  "8453",
-  "42161",
+const networkEndpoints: { networkEndpointName:String, goPlusNetworkEndpointNumber: number}[] = [
+  {networkEndpointName: "ethereum", goPlusNetworkEndpointNumber: 1},
+  {networkEndpointName: "base",     goPlusNetworkEndpointNumber: 8453},
+  {networkEndpointName: "arbitrum", goPlusNetworkEndpointNumber: 42161},
 ];
 
 let logResults: { isPassed: boolean, testName: string, shortDescription: string, longDescription: string }[] = [
@@ -33,8 +28,8 @@ export default function Chat() {
     }
   }, [messages]);
   
-  const [networkEndpoint, setNetworkEndpoint] = useState(networkEndpoints[0]);
-  const [networkEndpointNumber, setNetworkEndpointNumber] = useState("1");
+  const [networkEndpointName, setNetworkEndpointName] = useState(networkEndpoints[0].networkEndpointName);
+  const [goPlusNetworkEndpointNumber, setGoPlusNetworkEndpointNumber] = useState(networkEndpoints[0].goPlusNetworkEndpointNumber);
   const [contractAddress, setContractAddress] = useState("");
   const [contractAddressLowercase, setContractAddressLowercase] = useState("");
   const [securityData, setSecurityData] = useState("");
@@ -51,10 +46,13 @@ export default function Chat() {
         </label>
         <select 
           className="mb-2 text-black bg-white rounded border shadow-inner w-32 mb-4"
-          onChange={(e) => setNetworkEndpoint(e.target.value)}
+          onChange={(e) => {
+            setNetworkEndpointName(networkEndpoints[Number(e.target.value)].networkEndpointName);
+            setGoPlusNetworkEndpointNumber(networkEndpoints[Number(e.target.value)].goPlusNetworkEndpointNumber);
+          }}
           >
-          {networkEndpoints.map((endpoint) => (
-             <option key={endpoint} value={endpoint}>{endpoint}</option>
+          {networkEndpoints.map((endpoint, index) => (
+             <option key={index} value={index}>{endpoint.networkEndpointName}</option>
           ))}
         </select>
         <br />
@@ -70,20 +68,20 @@ export default function Chat() {
             type="button"
             onClick={async () => {
               console.log(contractAddress);
-              console.log(networkEndpointNumber);
+              console.log(goPlusNetworkEndpointNumber);
               const lowercaseString = convertToLowercase(contractAddress);
               setContractAddressLowercase(lowercaseString);
               console.log(lowercaseString);
               const queryParams = new URLSearchParams({
                 contractAddress,
-                networkEndpointNumber
+                goPlusNetworkEndpointNumber: String(goPlusNetworkEndpointNumber)
               }).toString();
-        
+
               const response = await fetch(`api/tokenSecurity-GoPlus?${queryParams}`, {
-                  method: "GET",
-                  headers: {
-                      "Content-Type": "application/json"
-                  },
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json"
+                },
               });
               const tokenSecurity = await response.json();
               console.log(tokenSecurity.result[contractAddressLowercase].token_name);

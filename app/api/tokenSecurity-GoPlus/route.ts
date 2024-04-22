@@ -9,10 +9,10 @@ export async function GET(req: Request) {
 
     // Getting query parameters directly from the URL search params
     const contractAddress = url.searchParams.get('contractAddress');
-    const networkEndpointNumber = url.searchParams.get('networkEndpointNumber');
+    const goPlusNetworkEndpointNumber = url.searchParams.get('goPlusNetworkEndpointNumber');
 
     // Ensure required parameters are provided
-    if (!contractAddress || !networkEndpointNumber) {
+    if (!contractAddress || !goPlusNetworkEndpointNumber) {
         return new Response(JSON.stringify({ error: 'Missing required query parameters' }), {
             status: 400,
             headers: { 'Content-Type': 'application/json' }
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
     // Constructing the request URL with the contract address
     // const apiUrl = `https://public-api.birdeye.so/defi/token_security?address=${contractAddress}`;
-    const apiUrl = `https://api.gopluslabs.io/api/v1/token_security/${networkEndpointNumber}?contract_addresses=${contractAddress}`;
+    const apiUrl = `https://api.gopluslabs.io/api/v1/token_security/${goPlusNetworkEndpointNumber}?contract_addresses=${contractAddress}`;
 
     // const headers = {
     //     'x-chain': networkEndpoint,
