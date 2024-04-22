@@ -58,7 +58,16 @@ export default function Chat() {
             type="text" 
             placeholder="Paste Token / Contract Address"
             value={contractAddress}
-            onChange={(e) => setContractAddress(e.target.value.toLowerCase())}
+            onChange={(e) => {
+              const hexRegex = /^(0x)?[0-9a-fA-F]*$/;
+              if (hexRegex.test(e.target.value)) {
+                if(e.target.value.length > 2 && e.target.value.substring(0, 2) !== "0x") {
+                  setContractAddress("0x" + e.target.value.toLowerCase());
+                } else {
+                  setContractAddress(e.target.value.toLowerCase());
+                }
+              }
+            }}
             />
           <button 
             className="flex-shrink-0 w-1/6 mx-2 bg-orange-500 hover:bg-orange-700 border-orange-500 hover:border-orange-700 text-sm border-4 text-white py-1 px-2 rounded" 
