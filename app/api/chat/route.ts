@@ -4,6 +4,7 @@ import { OpenAIStream, StreamingTextResponse } from 'ai';
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+//   baseURL: "https://4407-173-63-55-221.ngrok-free.app/v1",
 });
  
 // IMPORTANT! Set the runtime to edge

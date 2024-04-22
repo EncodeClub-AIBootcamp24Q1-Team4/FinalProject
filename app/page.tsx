@@ -8,12 +8,21 @@ const networkEndpoints: string[] = [
   "base",
   "arbitrum",
 ];
+const networkEndpointsNumber: string[] = [
+  "1",
+  "8453",
+  "42161",
+];
 
 let logResults: { isPassed: boolean, testName: string, shortDescription: string, longDescription: string }[] = [
   { "isPassed": true, testName: "Checking for honeypots...", shortDescription: "Not a Honeypot", longDescription: "AI concise analysis and reasoning for decision" },
   { "isPassed": false, testName: "Checking for locked liquidity...", shortDescription: "Liquidity Unlocked", longDescription: "AI concise analysis and reasoning for decision" },
   { "isPassed": true, testName: "Checking for verified contracts...", shortDescription: "Contract Verified", longDescription: "AI concise analysis and reasoning for decision" },
 ];
+
+function convertToLowercase(inputString: string): string {
+  return inputString.toLowerCase();
+}
 
 export default function Chat() {
   const { messages, input, isLoading, append, handleInputChange, handleSubmit } = useChat();
@@ -23,9 +32,14 @@ export default function Chat() {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
+  
   const [networkEndpoint, setNetworkEndpoint] = useState(networkEndpoints[0]);
+  const [networkEndpointNumber, setNetworkEndpointNumber] = useState("1");
   const [contractAddress, setContractAddress] = useState("");
+  const [contractAddressLowercase, setContractAddressLowercase] = useState("");
   const [securityData, setSecurityData] = useState("");
+  const [tokenName, setTokenName] = useState("");
+  const [tokenSymbol, setTokenSymbol] = useState("");
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4">
@@ -56,20 +70,26 @@ export default function Chat() {
             type="button"
             onClick={async () => {
               console.log(contractAddress);
+              console.log(networkEndpointNumber);
+              const lowercaseString = convertToLowercase(contractAddress);
+              setContractAddressLowercase(lowercaseString);
+              console.log(lowercaseString);
               const queryParams = new URLSearchParams({
                 contractAddress,
-                networkEndpoint
+                networkEndpointNumber
               }).toString();
         
-              const response = await fetch(`api/tokenSecurity?${queryParams}`, {
+              const response = await fetch(`api/tokenSecurity-GoPlus?${queryParams}`, {
                   method: "GET",
                   headers: {
                       "Content-Type": "application/json"
                   },
               });
               const tokenSecurity = await response.json();
-              console.log(tokenSecurity.data);
-              setSecurityData(JSON.stringify(tokenSecurity.data));
+              console.log(tokenSecurity.result[contractAddressLowercase].token_name);
+              setSecurityData(JSON.stringify(tokenSecurity.result));
+              setTokenName(JSON.stringify(tokenSecurity.result[contractAddressLowercase].token_name));
+              setTokenSymbol(JSON.stringify(tokenSecurity.result[contractAddressLowercase].token_symbol));
             }}
             >
             Check
@@ -82,8 +102,12 @@ export default function Chat() {
         <div className='bg-gray-200 mx-4 mt-4 w-3/4 items-stretch rounded p-4 h-full'>
           <h1 className="text-1xl text-black">Log</h1>
           <div className='h-px bg-white my-4'></div>
-            {logResults.map((logEntry) => (
-              <div className="flex justify-center items-center text-black">
+          <div className="flex justify-center items-center text-black">
+            <h2 className='text-2xl'>Token: {tokenName}</h2>
+            <h2 className='text-1xl text-gray-500'>{tokenSymbol}</h2>
+          </div>
+            {logResults.map((logEntry, index) => (
+              <div key={index} className="flex justify-center items-center text-black">
                 {logEntry.isPassed && (
                   <span className="text-green-500 text-9xl">&#10003;</span>
                 )}
