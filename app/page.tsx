@@ -9,11 +9,54 @@ const networkEndpoints: { networkEndpointName:String, goPlusNetworkEndpointNumbe
   {networkEndpointName: "arbitrum", goPlusNetworkEndpointNumber: 42161},
 ];
 
-let logResults: { isPassed: boolean, testName: string, shortDescription: string, longDescription: string }[] = [
-  { "isPassed": true, testName: "Checking for honeypots...", shortDescription: "Not a Honeypot", longDescription: "AI concise analysis and reasoning for decision" },
-  { "isPassed": false, testName: "Checking for locked liquidity...", shortDescription: "Liquidity Unlocked", longDescription: "AI concise analysis and reasoning for decision" },
-  { "isPassed": true, testName: "Checking for verified contracts...", shortDescription: "Contract Verified", longDescription: "AI concise analysis and reasoning for decision" },
-];
+enum Check {
+  Warning = -1,
+  Fail = 0,
+  Pass = 1,
+};
+
+interface LogResult {
+  check: Check;
+  description: string;
+  value: string;
+  info: string;
+};
+
+function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
+
+  let logResults: LogResult[] = [ ];
+
+  // Tax modifiable
+  if(tokenSecurity.hasOwnProperty("slippage_modifiable")) {
+    logResults.push({ 
+      check: tokenSecurity.slippage_modifiable==="1" ? Check.Fail : Check.Pass, 
+      description: "Tax Modifiable", 
+      value: tokenSecurity.slippage_modifiable==="1" ? "Yes" : "No", 
+      info: "The trading tax can be modifiable by the token contract." });
+  }
+
+  // Ownership Renouncable
+  if(tokenSecurity.hasOwnProperty("can_take_back_ownership")) {
+    logResults.push({ 
+      check: tokenSecurity.can_take_back_ownership==="1" ? Check.Fail : Check.Pass, 
+      description: "Ownership Renouncable", 
+      value: tokenSecurity.can_take_back_ownership==="1" ? "Yes" : "No", 
+      info: "Ownership is usually used to adjust the parameters and status of the contract, such as minting, modification of slippage, suspension of trading, setting blacklist, etc. When the contract's owner cannot be retrieved, is a black hole address, or does not have an owner, ownership-related functionality will most likely be disabled. These risky functions may be able to be reactivated if ownership is reclaimed." });
+  }
+
+  // Has whitelist?
+  if(tokenSecurity.hasOwnProperty("is_whitelisted")) {
+    logResults.push({ 
+      check: tokenSecurity.is_whitelisted==="1" ? Check.Warning : Check.Pass, 
+      description: "Has Whitelist Function", 
+      value: tokenSecurity.can_take_back_ownership==="1" ? "Yes" : "No", 
+      info: "It describes whether the whitelist function is not included in the contract. If there is a whitelist, some addresses may not be able to trade normally. '1' means true; '0' means false; No return means unknown.  Whitelisting is mostly used to allow specific addresses to make early transactions, tax-free, and not affected by transaction suspension.  For contracts without an owner (or the owner is a black hole address), the whitelist will not be able to get updated. However, the existing whitelist is still in effect.",
+     });
+  }
+
+  
+  return logResults;
+}
 
 export default function Chat() {
   const { messages, input, isLoading, append, handleInputChange, handleSubmit } = useChat();
@@ -27,10 +70,10 @@ export default function Chat() {
   const [networkEndpointName, setNetworkEndpointName] = useState(networkEndpoints[0].networkEndpointName);
   const [goPlusNetworkEndpointNumber, setGoPlusNetworkEndpointNumber] = useState(networkEndpoints[0].goPlusNetworkEndpointNumber);
   const [contractAddress, setContractAddress] = useState("");
-  const [contractAddressLowercase, setContractAddressLowercase] = useState("");
   const [securityData, setSecurityData] = useState("");
   const [tokenName, setTokenName] = useState("");
   const [tokenSymbol, setTokenSymbol] = useState("");
+  const [logResults, setLogResults] = useState<LogEntry[]>([]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4">
@@ -39,22 +82,24 @@ export default function Chat() {
       <div className="bg-gray-200 mx-4 mt-4 w-3/4 items-stretch rounded p-4">
         <label className="text-black font-bold mr-2">
           Select Network 
+          <select 
+            name="networkEndpointName"
+            className="mb-2 text-black bg-white rounded border shadow-inner w-32 mb-4"
+            onChange={(e) => {
+              setNetworkEndpointName(networkEndpoints[Number(e.target.value)].networkEndpointName);
+              setGoPlusNetworkEndpointNumber(networkEndpoints[Number(e.target.value)].goPlusNetworkEndpointNumber);
+            }}
+            >
+            {networkEndpoints.map((endpoint, index) => (
+              <option key={index} value={index}>{endpoint.networkEndpointName}</option>
+            ))}
+          </select>
         </label>
-        <select 
-          className="mb-2 text-black bg-white rounded border shadow-inner w-32 mb-4"
-          onChange={(e) => {
-            setNetworkEndpointName(networkEndpoints[Number(e.target.value)].networkEndpointName);
-            setGoPlusNetworkEndpointNumber(networkEndpoints[Number(e.target.value)].goPlusNetworkEndpointNumber);
-          }}
-          >
-          {networkEndpoints.map((endpoint, index) => (
-             <option key={index} value={index}>{endpoint.networkEndpointName}</option>
-          ))}
-        </select>
         <br />
         <div className="flex">
           <input 
             className="appearance-none bg-white-100 border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none rounded" 
+            name="contractAddress"
             type="text" 
             placeholder="Paste Token / Contract Address"
             value={contractAddress}
@@ -87,10 +132,19 @@ export default function Chat() {
                 },
               });
               const tokenSecurity = await response.json();
-              console.log(tokenSecurity.result[contractAddressLowercase].token_name);
-              setSecurityData(JSON.stringify(tokenSecurity.result));
-              setTokenName(JSON.stringify(tokenSecurity.result[contractAddressLowercase].token_name));
-              setTokenSymbol(JSON.stringify(tokenSecurity.result[contractAddressLowercase].token_symbol));
+              console.log(tokenSecurity); 
+              if (tokenSecurity.result[contractAddress] === undefined) {
+                setTokenName("CONTRACT NOT FOUND");
+                setTokenSymbol("");
+                setLogResults([]);
+              } else {
+                setSecurityData(JSON.stringify(tokenSecurity.result[contractAddress]));
+                setTokenName(tokenSecurity.result[contractAddress].token_name);
+                setTokenSymbol(tokenSecurity.result[contractAddress].token_symbol);
+                console.log(tokenSecurity.result[contractAddress].slippage_modifiable);
+                setLogResults(analyzeTokenSecurity(tokenSecurity.result[contractAddress]));
+                console.log(analyzeTokenSecurity(logResults));
+              }
             }}
             >
             Check
@@ -100,32 +154,44 @@ export default function Chat() {
       </div>
 
       <div className='flex flex-row items-center justify-center bg-white p-4 w-screen h-screen'>
-        <div className='bg-gray-200 mx-4 mt-4 w-3/4 items-stretch rounded p-4 h-full'>
+        <div className='bg-gray-200 mx-4 mt-4 w-1/4 items-stretch rounded p-4 h-full'>
           <h1 className="text-1xl text-black">Log</h1>
           <div className='h-px bg-white my-4'></div>
           <div className="flex justify-center items-center text-black">
-            <h2 className='text-2xl'>Token: {tokenName}</h2>
-            <h2 className='text-1xl text-gray-500'>{tokenSymbol}</h2>
+            {tokenSymbol.length > 0 && 
+              <h2 className='text-2xl'>Token: {tokenName}</h2>
+            }
+            {tokenSymbol.length == 0 && 
+              <h2 className='text-2xl text-red-500'>{tokenName}</h2>
+            }
+            {tokenSymbol.length > 0 && tokenName !== tokenSymbol &&
+              <h2 className='text-2xl text-gray-500'> (Symbol: {tokenSymbol})</h2>
+            }
           </div>
             {logResults.map((logEntry, index) => (
-              <div key={index} className="flex justify-center items-center text-black">
-                {logEntry.isPassed && (
-                  <span className="text-green-500 text-9xl">&#10003;</span>
-                )}
-                {! logEntry.isPassed && (
-                  <span className="text-red-500 text-9xl">&#10005;</span>
-                )}
-                <div className="ml-4">
-                  <h2 className="text-1xl">{logEntry.testName}</h2>
-                  {logEntry.isPassed && (
-                    <p className="text-green-500">{logEntry.shortDescription}</p>
+              <div key={index} className="flex justify-between items-center text-black">
+                <div className="flex items-center">
+                  {logEntry.check === Check.Pass && (
+                    <span className="text-green-500 font-bold">&#10003;</span>
                   )}
-                  {! logEntry.isPassed && (
-                    <p className="text-red-500">{logEntry.shortDescription}</p>
-                  
+                  {logEntry.check === Check.Fail && (
+                    <span className="text-red-500 font-bold">&#10005;</span>
                   )}
-                  <p>{logEntry.longDescription}</p>
+                  {logEntry.check === Check.Warning && (
+                    <span className="text-amber-500 font-bold">&#10005;</span>
+                  )}
+                  <div className="ml-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center cursor-pointer" title={logEntry.info}>i</div>
+                  <h2 className="text-1xl">{logEntry.description}</h2>
                 </div>
+                {logEntry.check === Check.Pass && (
+                  <h2 className="text-1xl text-green-500">{logEntry.value}</h2>
+                )}
+                {logEntry.check === Check.Fail && (
+                  <h2 className="text-1xl text-red-500">&#9888; {logEntry.value}</h2>
+                )}
+                {logEntry.check === Check.Warning && (
+                  <h2 className="text-1xl text-amber-500">&#9888; {logEntry.value}</h2>
+                )}
               </div>
               ))}
           </div>
@@ -179,6 +245,7 @@ export default function Chat() {
                 <form onSubmit={handleSubmit}>
                   <input
                     className="relative bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl text-black"
+                    name="input"
                     value={input}
                     placeholder="Ask about your rugchecker analysis"
                     onChange={handleInputChange}
