@@ -15,10 +15,6 @@ let logResults: { isPassed: boolean, testName: string, shortDescription: string,
   { "isPassed": true, testName: "Checking for verified contracts...", shortDescription: "Contract Verified", longDescription: "AI concise analysis and reasoning for decision" },
 ];
 
-function convertToLowercase(inputString: string): string {
-  return inputString.toLowerCase();
-}
-
 export default function Chat() {
   const { messages, input, isLoading, append, handleInputChange, handleSubmit } = useChat();
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -61,7 +57,8 @@ export default function Chat() {
             className="appearance-none bg-white-100 border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none rounded" 
             type="text" 
             placeholder="Paste Token / Contract Address"
-            onChange={(e) => setContractAddress(e.target.value)}
+            value={contractAddress}
+            onChange={(e) => setContractAddress(e.target.value.toLowerCase())}
             />
           <button 
             className="flex-shrink-0 w-1/6 mx-2 bg-orange-500 hover:bg-orange-700 border-orange-500 hover:border-orange-700 text-sm border-4 text-white py-1 px-2 rounded" 
@@ -69,9 +66,6 @@ export default function Chat() {
             onClick={async () => {
               console.log(contractAddress);
               console.log(goPlusNetworkEndpointNumber);
-              const lowercaseString = convertToLowercase(contractAddress);
-              setContractAddressLowercase(lowercaseString);
-              console.log(lowercaseString);
               const queryParams = new URLSearchParams({
                 contractAddress,
                 goPlusNetworkEndpointNumber: String(goPlusNetworkEndpointNumber)
