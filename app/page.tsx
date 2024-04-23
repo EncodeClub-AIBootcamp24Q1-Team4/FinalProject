@@ -27,18 +27,19 @@ export default function Chat() {
   const networkId = '8453' // base chain
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-white p-4">
-      <div className='top-0 right-6 lg:absolute'>
-        <Image className="-z-10 rounded-3xl" src="/logo.webp" alt="Logo" width={350} height={400}/>
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-[#00325a] rounded p-4 pb-0">
+      <div className='w-full flex justify-center'>
+        <Image className="rounded-3xl" src="/logo.webp" alt="Logo" width={350} height={400}/>
       </div>
-      <h1 className="text-4xl text-black m-10 text-center z-10"><a href='/'>BASED RUG CHAT</a><small className='text-sm block'>ai rug check on the base network</small></h1>
-      <h1 className="text-lg text-black text-wrap w-1/2 text-center mb-8 capitalize">Be a smart degen <br />BasedRugChat kek skem</h1>
-      <div className="bg-gray-200 mx-4 mt-4 w-2/4 items-stretch rounded p-4">
+      {/* <h1 className="text-4xl text-[#ffbe1e] m-10 text-center z-10"><a href='/'>BASED RUG CHAT</a><small className='text-sm block'>ai rug check on the base network</small></h1> */}
+      <h1 className="text-lg text-[#ffbe1e] text-wrap w-1/2 text-center mb-8">ai rug check on the base network</h1>
+      <h1 className="text-lg text-[#ffbe1e] text-wrap w-1/2 text-center m-8 capitalize">Be a smart degen <br />BasedRugChat kek skem</h1>
+      <div className="bg-gradient-to-r from-[#014570] to-[#1ff3d4] mx-4 mt-4 w-2/4 items-stretch rounded-lg p-4 border-white border-4">
         <div className="flex pt-6 px-6">
           <input 
             className="appearance-none bg-white-100 border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none rounded" 
             type="text" 
-            placeholder="Token / Contract Address"
+            placeholder="Base Token / Contract Address"
             onChange={(e) => setContractAddress(e.target.value.toLowerCase())}
             />
           <button 
@@ -70,9 +71,9 @@ export default function Chat() {
         <br />
       </div>
 
-      <div className='flex flex-row items-center justify-center bg-white p-4 w-screen h-screen'>
-        <div className='bg-gray-200 mx-4 mt-4 w-3/4 items-stretch rounded p-4 h-full'>
-          <h1 className="text-1xl text-black">INFO</h1>
+      <div className='flex flex-row items-center justify-center bg-gradient-to-b from-[#00325a] to-[#1ff3d4] p-4 pb-10 w-screen h-screen'>
+        <div className='bg-gradient-to-r from-[#014570] to-[#00325a] mx-4 mt-4 w-3/4 items-stretch rounded-lg border-white border-4 p-4 h-full'>
+          <h1 className="text-1xl text-white">INFO</h1>
           <div className='h-px bg-white my-4'></div>
           {isDataLoading ? (
             <div className='w-full text-center'>
@@ -107,8 +108,8 @@ export default function Chat() {
           ) : null}
         </div>
 
-          <div className='bg-gray-200 mx-4 mt-4 w-3/4 items-stretch rounded p-4 h-full'>
-          <h1 className="text-md text-black">BRC</h1>
+          <div className='bg-gradient-to-l from-[#014570] to-[#00325a] mx-4 mt-4 w-3/4 items-stretch rounded-lg border-white border-4 p-4 h-full'>
+          <h1 className="text-md text-white">BRC</h1>
           <div className="h-px bg-white my-4"></div>
             <div className="flex flex-col w-full max-w-md pb-24 mx-auto stretch h-screen">
               <div className='overflow-auto w-full' ref={messagesContainerRef}>
@@ -134,7 +135,7 @@ export default function Chat() {
               <div className='relative bottom-0 w-full max-w-md'>
                 <div className='flex flex-col justify-center mb-2 h-[4rem] items-center pt-4'>
                   <button
-                    className='bg-gray-900 w-[22px] h-[22px] hover:w-auto hover:h-auto hover:py-2 hover:px-8 overflow-hidden text-white rounded-xl hover:rounded-md shadow-xl'
+                    className='bg-[#fe3fa0] w-[22px] h-[22px] hover:w-auto hover:h-auto hover:py-2 hover:px-8 overflow-hidden text-white rounded-xl hover:rounded-md shadow-xl'
                     disabled={isLoading}
                     onClick={() =>
                       append({ role: "user", content: `Summarize this token security report ${securityData} and explain if this is a scam or a rugpull`})
