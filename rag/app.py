@@ -107,8 +107,9 @@ query = text("""
     AND   d.token_id = l.token_id
     AND   h.token_id = l.token_id
     ORDER BY t.id DESC
-    LIMIT 2
 """)
+#    LIMIT 2
+
 
 # Execute the query and fetch the results
 with engine.connect() as connection:
@@ -185,6 +186,8 @@ for row in rows:
     document = Document(page_content=content)
     documents.append(document)
 
+print(f"Number of rows from database: {len(documents)}")
+
 # Split the documents into chunks
 texts = text_splitter.split_documents(documents)
 
@@ -195,10 +198,10 @@ chunks = text_splitter.split_documents(pdf)
 texts.extend(chunks)
 
 # Load the WhatIsARugPull Document
-loader = TextLoader("whatisarugpull.txt")
-whatisarugpull = loader.load_and_split()
-chunks = text_splitter.split_documents(whatisarugpull)
-texts.extend(chunks)
+# loader = TextLoader("whatisarugpull.txt")
+# whatisarugpull = loader.load_and_split()
+# chunks = text_splitter.split_documents(whatisarugpull)
+# texts.extend(chunks)
 
 # Create the vector store
 # vectorstore = Chroma.from_documents(texts, embedding, persist_directory=folder_path)
