@@ -308,6 +308,8 @@ async function insertLpHolderData(tokenId: number, lpHolderData: any[]) {
   }
 }
 
+// fetch new pools from envio indexer and token security data from goplus api
+// upload to postgres db for model training
 export async function GET() {
   try {
     await fetchAndInsertPools(100, 0);  // Fetch 100 records at a time, starting from offset 0
@@ -321,7 +323,7 @@ export async function GET() {
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-//   baseURL: "https://4407-173-63-55-221.ngrok-free.app/v1",
+  // baseURL: "https://URLHERE/v1",
 });
  
 // IMPORTANT! Set the runtime to nodejs

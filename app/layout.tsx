@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "./navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI Crypto Rug Pull Detector",
-  description: "Identifies the likelihood of a rug pull at a crypto address",
+  title: "Based Rug Chat",
+  description: "AI rug check on base",
 };
 
 export default function RootLayout({
@@ -18,8 +17,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar />
         {children}
+        <footer className='text-center text-gray-300 pt-6'>
+          Encode Club | AI Bootcamp 24Q1 | TEAM4 Final Project
+        </footer>
       </body>
     </html>
   );

@@ -7,28 +7,36 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
 
     // Getting query parameters directly from the URL search params
-    const contractAddress = url.searchParams.get('contractAddress');
-    const goPlusNetworkEndpointNumber = url.searchParams.get('goPlusNetworkEndpointNumber');
+    const token_address = url.searchParams.get('token_address');
+    const query = url.searchParams.get('query');
 
     // Ensure required parameters are provided
-    if (!contractAddress || !goPlusNetworkEndpointNumber) {
+    if (!token_address || !query) {
         return new Response(JSON.stringify({ error: 'Missing required query parameters' }), {
             status: 400,
             headers: { 'Content-Type': 'application/json' }
         });
     }
 
-    // Constructing the request URL with the contract address
-    const apiUrl = `https://api.gopluslabs.io/api/v1/token_security/${goPlusNetworkEndpointNumber}?contract_addresses=${contractAddress}`;
-
+    // POST http://localhost:8080/check HTTP/1.1
+    // Content-Type: application/json
+    // {
+    //     "query": "What is the likelyhood of 0xb5C65358ba679622B174b7b2d1e5FB18199aDb00 being a rug pull?",
+    //     "token_address": "0xb5C65358ba679622B174b7b2d1e5FB18199aDb00"
+    // }
+    const api_url = `http://localhost:8080/check`;
     const headers = {
-        accept: '*/*'
+        accept: '*/*',
+        'Content-Type': 'application/json'
     };
-
     try {
-        const response = await fetch(apiUrl, {
-            method: 'GET',
-            headers: headers
+        const response = await fetch(api_url, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                token_address: token_address,
+                query: query
+            }),
         });
         const data = await response.json();
         return new Response(JSON.stringify(data), {

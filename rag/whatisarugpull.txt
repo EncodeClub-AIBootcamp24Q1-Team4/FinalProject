@@ -1,0 +1,94 @@
+Crypto rug pulls: What is a rug pull in crypto and 6 ways to spot it
+
+1. What is a rug pull in cryptocurrency?
+A rug pull is a type of crypto scam that occurs when a team pumps their project’s token before disappearing with the funds, leaving their investors with a valueless asset. 
+
+Rug pulls happen when fraudulent developers create a new crypto token, pump up the price and then pull as much value out of them as possible before abandoning them as their price drops to zero. Rug pulls are a type of exit scam and a decentralized finance (DeFi) exploit.
+
+Before learning how to spot a rug pull in crypto and why crypto rug pulls happen, it helps to understand the three different types of rug pulls.
+
+2. What are the various types of rug pulls?
+There are three main types of rug pulls in crypto: liquidity stealing, limiting sell orders and dumping. 
+
+Liquidity stealing occurs when token creators withdraw all the coins from the liquidity pool. Doing so removes all the value injected into the currency by investors, driving its price down to zero.
+
+These “liquidity pulls” usually happen in DeFi environments. A DeFi rug pull is the most common exit scam.
+
+Limiting sell orders is a subtle way for a malicious developer to defraud investors. In this situation, the developer codes the tokens so that they’re the only party that is able to sell them. 
+
+Developers then wait for retail investors to buy into their new crypto using paired currencies. Paired currencies are two currencies that have been paired for trading, with one against the other. Once there is enough positive price action, they dump their positions and leave a worthless token in their wake.
+
+The Squid Token scam exemplifies rug pulls of this kind.
+
+Dumping occurs when developers quickly sell off their own large supply of tokens. Doing so drives down the price of the coin and leaves remaining investors holding worthless tokens. “Dumping” usually occurs after heavy promotion on social media platforms. The resulting spike and sell-off are known as a Pump-and-Dump Scheme. 
+
+Dumping is more of an ethical gray area than other DeFi rug pull scams. In general, it’s not unethical for crypto developers to buy and sell their own currency. “Dumping,” when it comes to DeFi cryptocurrency rug pulls, is a question of how much and how quickly a coin is sold.
+
+3. Liquidity stealing occurs when token creators withdraw all the coins from the liquidity pool. Doing so removes all the value injected into the currency by investors, driving its price down to zero.
+
+These “liquidity pulls” usually happen in DeFi environments. A DeFi rug pull is the most common exit scam.
+
+Limiting sell orders is a subtle way for a malicious developer to defraud investors. In this situation, the developer codes the tokens so that they’re the only party that is able to sell them. 
+
+Developers then wait for retail investors to buy into their new crypto using paired currencies. Paired currencies are two currencies that have been paired for trading, with one against the other. Once there is enough positive price action, they dump their positions and leave a worthless token in their wake.
+
+The Squid Token scam exemplifies rug pulls of this kind.
+
+Dumping occurs when developers quickly sell off their own large supply of tokens. Doing so drives down the price of the coin and leaves remaining investors holding worthless tokens. “Dumping” usually occurs after heavy promotion on social media platforms. The resulting spike and sell-off are known as a Pump-and-Dump Scheme. 
+
+Dumping is more of an ethical gray area than other DeFi rug pull scams. In general, it’s not unethical for crypto developers to buy and sell their own currency. “Dumping,” when it comes to DeFi cryptocurrency rug pulls, is a question of how much and how quickly a coin is sold.
+
+4. Are crypto rug pulls illegal?
+Crypto rug pulls are not always illegal, but they are always unethical. 
+
+Hard rug pulls are illegal. Soft rug pulls are unethical, but not always illegal. For example, if a crypto project promises to donate funds but chooses to keep the money instead, that’s unethical but not illegal. Either way, like most fraudulent activities in the crypto industry, both types can be challenging to track and prosecute. 
+
+The collapse of the Turkish cryptocurrency exchange Thodex is a prime example of a rug pull in crypto. The $2 billion dollar theft was one of the biggest crypto rug pulls of 2021. It is also one of the largest centralized finance (CeFi) exit scams in history. 
+
+Although Turkish police detained 62 people during its investigation of the major scam, the whereabouts of the alleged perpetrator remains unknown. 
+
+Other recent examples of protocols that have suffered this type of crypto rug pull include Meerkat Finance, AnubisDAO, Compounder Finance and Uranium Finance.
+
+5. How to avoid a rug pull in crypto?
+There are several clear signs that investors can watch out for to protect themselves from rug pulls such as the liquidity not being locked and no external audit having been conducted. 
+
+The following are six signs users should watch out for to protect their assets from crypto rug pulls.
+
+Unknown or anonymous developers
+Investors should consider the credibility of the people behind new crypto projects. Are the developers and promoters known in the crypto community? What is their track record? If the development team has been doxxed but isn’t well known, do they still appear legitimate and able to deliver on their promises? 
+
+Investors should be skeptical of new and easily faked social media accounts and profiles. The quality of the project’s white paper, website, and other media should offer clues about the project’s overall legitimacy. 
+
+Anonymous project developers could be a red flag. While it’s true that the world’s original and largest cryptocurrency was developed by Satoshi Nakamoto, who remains anonymous to this day, times are changing.
+
+No liquidity locked
+One of the easiest ways to distinguish a scam coin from a legitimate cryptocurrency is to check if the currency is liquidity locked. With no liquidity lock on the token supply in place, nothing stops the project creators from running off with the entirety of the liquidity.
+
+Liquidity is secured through time-locked smart contracts, ideally lasting three to five years from the token’s initial offering. While developers can custom-script their own time locks, third-party lockers can provide greater peace of mind.
+
+Investors should also check the percentage of the liquidity pool that has been locked. A lock is only helpful in proportion to the amount of the liquidity pool it secures. Known as total value locked (TVL), this figure should be between 80% and 100%. 
+
+Limits on sell orders
+A bad actor can code a token to restrict the selling ability of certain investors and not others. These selling restrictions are hallmark signs of a scam project. 
+
+Since selling restrictions are buried in code, it can be difficult to identify whether there is fraudulent activity. One of the ways to test this is to purchase a tiny amount of the new coin and then immediately attempt to sell it. If there are problems offloading what was just purchased, the project is likely to be a scam. 
+
+Skyrocketing price movement with limited token holders
+Sudden massive swings in price for a new coin should be viewed with caution. This unfortunately rings true if the token has no liquidity locked. Substantial price spikes in new DeFi coins are often signs of the “pump” before the “dump.”
+
+Investors skeptical about a coin’s price movement can use a block explorer to check the number of coin holders. A small number of holders makes the token susceptible to price manipulation. Signs of a small group of token holders could also mean that a few whales can dump their positions and do severe and immediate damage to the coin’s value.
+
+Suspiciously high yields
+If something sounds too good to be true, it probably is. If the yields for a new coin seem suspiciously high but it doesn’t turn out to be a rug pull, it’s likely a Ponzi scheme.
+
+When tokens offer an annual percentage yield (APY) in the triple digits, although not necessarily indicative of a scam, these high returns usually translate to equally high risk.
+
+No external audit
+It is now standard practice for new cryptocurrencies to undergo a formal code audit process conducted by a reputable third party. One notorious example is Tether (USDT), a centralized stablecoin whose team had failed to disclose that it held non-fiat-backed assets. An audit is especially applicable for decentralized currencies, where default auditing for DeFi projects is a must.
+
+However, potential investors shouldn’t simply take a development team’s word that an audit has taken place. The audit should be verifiable by a third party and show that nothing malicious was found in the code. 
+
+Spotting a crypto rug pull scam: It takes some digging
+In 2021, an estimated $7.7 billion was stolen from investors in rug pull cryptocurrency scams. These investors trusted that they were investing in legitimate projects, only to have the rug pulled from beneath their feet.
+
+Before investing, it’s worth taking the time to research new cryptos and to do one’s due diligence before investing in a new project.
