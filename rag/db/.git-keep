@@ -1,0 +1,210 @@
+Following are the most important things to lookout for when detecting a scam or potential rug project: has hidden owner or can take back ownership, cannot buy, cannot sell all, is honeypot or honeypot with same creator, tokens are mintable, has external call or is proxy. 0 is false, 1 is true, disregard None or empty fields.
+from flask import Flask, request
+from langchain_community.llms import Ollama
+from langchain.prompts import PromptTemplate
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+from langchain_community.document_loaders import PDFPlumberLoader
+from langchain_community.docstore.document import Document
+from langchain_community.vectorstores import Chroma
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from sqlalchemy import create_engine, text
+
+app = Flask( __name__ )
+
+# folder_path = "db"
+cached_llm = Ollama(base_url="https://5411-173-63-55-221.ngrok-free.app", model="llama3")
+
+embedding = FastEmbedEmbeddings()
+
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1024, chunk_overlap=80, length_function=len, is_separator_regex=False
+)
+
+raw_prompt = PromptTemplate.from_template(
+    """ 
+    <s>[INST] You are Based RugChecker, an AI wizard with a knack for detecting rugs on the base chain and a passion for protecting people from scams on the blockchain. If you do not have an answer from the provided information say so. Provide concise and direct answers to the questions, avoiding unnecessary details or elaboration. Only when and if asked - wen moon - give random conspiracy theories about manned mission to moon, how it was all faked and that we have never really stepped a foot on the moon, otherwise do not mention conspiracy theory at all. Following are the most important things to lookout for when detecting a scam or potential rug project: has hidden owner or can take back ownership, cannot buy, cannot sell all, is honeypot or honeypot with same creator, tokens are mintable, has external call or is proxy. 0 is false, 1 is true, disregard None or empty fields. Always include the name of the token that you are checking in your response. [/INST]</s>
+    [INST] {input}
+           Context: {context}
+           Answer:
+    [/INST]
+"""
+)
+
+# Configure postgres db
+engine = create_engine("postgresql://basedrugchat_owner:6cPSqaHkw3tJ@ep-spring-wave-a4loxi6l-pooler.us-east-1.aws.neon.tech/basedrugchat?sslmode=require")
+connection = engine.connect()
+
+query=text("""
+    SELECT 
+        t.*,
+        d.*,
+        h.*,
+        lp.*
+    FROM tokens t
+    LEFT JOIN dexs d ON t.id = d.token_id
+    LEFT JOIN holders h ON t.id = h.token_id
+    LEFT JOIN lp_holders lp ON t.id = lp.token_id
+    LIMIT 10
+""")
+
+# Execute the query and fetch the results
+with engine.connect() as connection:
+    result = connection.execute(query)
+    rows = result.fetchall()
+
+# Process the results and create custom documents
+documents = []
+for row in rows:
+    content = f"""
+        Token:
+        - ID: {row.id}
+        - Address: {row.token_address}
+        - Name: {row.token_name}
+        - Symbol: {row.token_symbol}
+        - Total Supply: {row.total_supply}
+        - Anti Whale Modifiable: {row.anti_whale_modifiable}
+        - Buy Tax: {row.buy_tax}
+        - Can Take Back Ownership: {row.can_take_back_ownership}
+        - Cannot Buy: {row.cannot_buy}
+        - Cannot Sell All: {row.cannot_sell_all}
+        - Creator Address: {row.creator_address}
+        - Creator Balance: {row.creator_balance}
+        - Creator Percent: {row.creator_percent}
+        - External Call: {row.external_call}
+        - Hidden Owner: {row.hidden_owner}
+        - Holder Count: {row.holder_count}
+        - Honeypot with Same Creator: {row.honeypot_with_same_creator}
+        - Is Anti Whale: {row.is_anti_whale}
+        - Is Blacklisted: {row.is_blacklisted}
+        - Is Honeypot: {row.is_honeypot}
+        - Is in DEX: {row.is_in_dex}
+        - Is Mintable: {row.is_mintable}
+        - Is Open Source: {row.is_open_source}
+        - Is Proxy: {row.is_proxy}
+        - Is Whitelisted: {row.is_whitelisted}
+        - LP Holder Count: {row.lp_holder_count}
+        - LP Total Supply: {row.lp_total_supply}
+        - Owner Address: {row.owner_address}
+        - Owner Balance: {row.owner_balance}
+        - Owner Change Balance: {row.owner_change_balance}
+        - Owner Percent: {row.owner_percent}
+        - Personal Slippage Modifiable: {row.personal_slippage_modifiable}
+        - Selfdestruct: {row.selfdestruct}
+        - Sell Tax: {row.sell_tax}
+        - Slippage Modifiable: {row.slippage_modifiable}
+        - Trading Cooldown: {row.trading_cooldown}
+        - Transfer Pausable: {row.transfer_pausable}
+
+        DEX:
+        - ID: {row.id}
+        - Token ID: {row.token_id}
+        - Liquidity Type: {row.liquidity_type}
+        - Name: {row.name}
+        - Liquidity: {row.liquidity}
+        - Pair: {row.pair}
+
+        Holders:
+        - ID: {row.id}
+        - Token ID: {row.token_id}
+        - Holder Address: {row.holder_address}
+        - Tag: {row.tag}
+        - Is Contract: {row.is_contract}
+        - Balance: {row.balance}
+        - Percent: {row.percent}
+        - Is Locked: {row.is_locked}
+
+        LP Holders:
+        - ID: {row.id}
+        - Token ID: {row.token_id}
+        - LP Address: {row.lp_address}
+        - Tag: {row.tag}
+        - Value: {row.value}
+        - Is Contract: {row.is_contract}
+        - Balance: {row.balance}
+        - Percent: {row.percent}
+        - NFT List: {row.nft_list}
+        - Is Locked: {row.is_locked}
+    """
+
+    document = Document(page_content=content)
+    documents.append(document)
+
+# Split the documents into chunks
+texts = text_splitter.split_documents(documents)
+# print(f"len: {len(texts)}") # => 3
+
+# Load guiding document for rugcheck
+# loader = PDFPlumberLoader("rugcheck.pdf")
+# pdf = loader.load_and_split()
+# chunks = text_splitter.split_documents(pdf)
+# texts.extend(chunks)
+
+# Create the vector store
+# vectorstore = Chroma.from_documents(texts, embedding, persist_directory=folder_path)
+vectorstore = Chroma.from_documents(texts, embedding)
+
+@app.route("/check", methods=["POST"])
+def checkPost():
+    print("POST /check")
+    json_content = request.json
+    query = json_content.get("query")
+    print(f"query: {query}")
+
+    print("Loading vector store")
+    vector_store = Chroma(embedding_function=embedding)
+
+    print("Creating chain")
+    retriever = vector_store.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={
+            "k": 20,
+            "score_threshold": 0.1,
+        },
+    )
+
+    document_chain = create_stuff_documents_chain(cached_llm, raw_prompt)
+    chain = create_retrieval_chain(retriever, document_chain)
+
+    result = chain.invoke({"input": query})
+
+    print(result)
+
+    sources = []
+    for doc in result["context"]:
+        sources.append(
+            {"source": doc.metadata["source"], "page_content": doc.page_content}
+        )
+
+    response_answer = {"answer": result["answer"], "sources": sources}
+    return response_answer
+
+@app.route("/ai", methods=["POST"])
+def aiPost():
+    print("POST /ai")
+    json_content = request.json
+    query = json_content.get("query")
+    print(f"query: {query}")
+
+    # Use the vector store to retrieve relevant documents
+    docs = vectorstore.similarity_search(query) # pdf docs 17+3 for 1 token retrieved
+    print(f"docs len: {len(docs)}")
+
+    # Format the retrieved documents as context
+    context = "\n".join([doc.page_content for doc in docs])
+
+    prompt = raw_prompt.format(input=query, context=context)
+
+    response = cached_llm.invoke(prompt)
+    print(response)
+    response_answer = {"answer": response}
+    
+    return response_answer
+
+
+def start_app():
+    app.run(host="0.0.0.0", port=8080, debug=True)
+
+if __name__ == "__main__":
+    start_app()

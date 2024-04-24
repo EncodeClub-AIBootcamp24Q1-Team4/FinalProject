@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "humao.rest-client",
+        "charliermarsh.ruff",
+        "streetsidesoftware.code-spell-checker",
+        "aaron-bond.better-comments",
+        "johnpapa.vscode-cloak"
+    ]
+}
