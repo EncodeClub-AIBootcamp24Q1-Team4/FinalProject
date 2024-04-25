@@ -8,10 +8,10 @@ export async function GET(req: Request) {
 
     // Getting query parameters directly from the URL search params
     const contractAddress = url.searchParams.get('contractAddress');
-    const goPlusNetworkEndpointNumber = url.searchParams.get('goPlusNetworkEndpointNumber');
+    const networkId = url.searchParams.get('networkId');
 
     // Ensure required parameters are provided
-    if (!contractAddress || !goPlusNetworkEndpointNumber) {
+    if (!contractAddress || !networkId) {
         return new Response(JSON.stringify({ error: 'Missing required query parameters' }), {
             status: 400,
             headers: { 'Content-Type': 'application/json' }
@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     }
 
     // Constructing the request URL with the contract address
-    const apiUrl = `https://api.gopluslabs.io/api/v1/token_security/${goPlusNetworkEndpointNumber}?contract_addresses=${contractAddress}`;
+    const apiUrl = `https://api.gopluslabs.io/api/v1/token_security/${networkId}?contract_addresses=${contractAddress}`;
 
     const headers = {
         accept: '*/*'

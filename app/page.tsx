@@ -4,10 +4,6 @@ import Image from 'next/image'
 import { useChat } from 'ai/react';
 import { useState, useEffect, useRef } from 'react';
 
-const networkEndpoints: { networkEndpointName:String, goPlusNetworkEndpointNumber: number}[] = [
-  {networkEndpointName: "base",     goPlusNetworkEndpointNumber: 8453},
-];
-
 enum Check {
   Fail = -1,
   Warning = 0,
@@ -29,7 +25,7 @@ interface Message {
 
 function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
 
-  let logResults: LogResult[] = [ ];
+  let logResults: LogResult[] = [];
 
   // Tax modifiable
   if(tokenSecurity.hasOwnProperty("slippage_modifiable") && tokenSecurity.slippage_modifiable !== null && tokenSecurity.slippage_modifiable !== "") {
@@ -40,11 +36,11 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
       info: "The trading tax can be modifiable by the token contract." });
   }
 
-  // Ownership Renouncable
+  // Ownership Renounced
   if(tokenSecurity.hasOwnProperty("can_take_back_ownership") && tokenSecurity.can_take_back_ownership !== null && tokenSecurity.can_take_back_ownership !== "") {
     logResults.push({ 
       check: tokenSecurity.can_take_back_ownership==="1" ? Check.Fail : Check.Pass, 
-      description: "Ownership Renouncable", 
+      description: "Ownership Renounced", 
       value: tokenSecurity.can_take_back_ownership==="1" ? "Yes" : "No", 
       info: "Ownership is usually used to adjust the parameters and status of the contract, such as minting, modification of slippage, suspension of trading, setting blacklist, etc. When the contract's owner cannot be retrieved, is a black hole address, or does not have an owner, ownership-related functionality will most likely be disabled. These risky functions may be able to be reactivated if ownership is reclaimed." });
   }
@@ -139,8 +135,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // Trading with CooldownTime	trading_cooldown	It describes whether the contract has a trading-cool-down mechanism that can limit the minimum time between two transactions. "1" means true; "0" means false; No return means unknown.	(1) When "is_open_source": "0", there will be no return.
-	//		(2) Sometimes, when "is_proxy": "1", there will be no return.
+  // Trading Cooldown
   if(tokenSecurity.hasOwnProperty("trading_cooldown") && tokenSecurity.trading_cooldown !== null && tokenSecurity.trading_cooldown !== "") {
     logResults.push({ 
       check: tokenSecurity.trading_cooldown==="1" ? Check.Warning : Check.Pass, 
@@ -150,9 +145,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // Cannot Sell All	cannot_sell_all	It describes whether the contract has the function restricting the token holders from selling all the tokens. "1" means true; "0" means false; No return means unknown.	(1) When "is_in_dex": "0", there will be no return.
-	//		(2) This feature means that you will not be able to sell all your tokens in a single sale. Sometimes you need to leave a certain percentage of the token, e.g. 10%, sometimes you need to leave a fixed number of tokens, such as 10 tokens.
-	//		(3) When "buy_tax": "1", there will be no return.
+  // Cannot Sell All
   if(tokenSecurity.hasOwnProperty("cannot_sell_all") && tokenSecurity.cannot_sell_all !== null && tokenSecurity.cannot_sell_all !== "") {
     logResults.push({ 
       check: tokenSecurity.cannot_sell_all==="1" ? Check.Warning : Check.Pass, 
@@ -162,10 +155,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // Owner Can Change Balance	owner_change_balance	Returns "1" if the contract owner can change token holder balances; "0" if it cannot. Will not be returned if reclamation data is unknown.	(1) Will not be returned if "is_open_source" is 0.
-	//		(2) May not be returned if "is_proxy" is 1.
-	//		(3) Tokens with this feature allow the owner to modify anyone's balance, resulting in a holder's asset to be changed (i.e. to 0) or a massive minting and sell-off.
-	//		(4) This function generally relies on ownership. When the contract's owner cannot be retrieved, is a black hole address, or does not have an owner, ownership-related functionality will most likely be disabled.
+  // Owner Can Change Balance	
   if(tokenSecurity.hasOwnProperty("owner_change_balance") && tokenSecurity.owner_change_balance !== null && tokenSecurity.owner_change_balance !== "") {
     logResults.push({ 
       check: tokenSecurity.owner_change_balance==="1" ? Check.Fail : Check.Pass, 
@@ -175,10 +165,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // Blacklist	is_blacklisted	It describes whether the blacklist function is not included in the contract. If there is a blacklist, some addresses may not be able to trade normally. "1" means true; "0" means false; No return means unknown.	(1) When "is_open_source": "0", there will be no return.
-	//		(2) Sometimes, when "is_proxy": "1", there will be no return.
-	//		(3) The contract owner may add any address to the blacklist, and the token holder in the blacklist will not be able to trade. Abuse of the blacklist function will lead to great risks.
-	//		(4) For contracts without an owner (or the owner is a black hole address), the blacklist will not be able to get updated. However, the existing blacklist is still in effect.
+  // Blacklist
   if(tokenSecurity.hasOwnProperty("is_blacklisted") && tokenSecurity.is_blacklisted !== null && tokenSecurity.is_blacklisted !== "") {
     logResults.push({ 
       check: tokenSecurity.is_blacklisted==="1" ? Check.Warning : Check.Pass, 
@@ -188,8 +175,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // Anti Whale	is_anti_whale	It describes whether the contract has the function to limit the maximum amount of transactions or the maximum token position for a single address. "1" means true; "0" means false; No return means unknown.	(1) When "is_open_source": "0", there will be no return.
-	//		(2) Sometimes, when "is_proxy": "1", there will be no return.
+  // Anti Whale	
   if(tokenSecurity.hasOwnProperty("is_anti_whale") && tokenSecurity.is_anti_whale !== null && tokenSecurity.is_anti_whale !== "") {
     logResults.push({ 
       check: tokenSecurity.is_anti_whale==="1" ? Check.Warning : Check.Pass, 
@@ -199,7 +185,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // Token holder number	holder_count	It describes the number of token holders. Example:"holder_count": "4342"
+  // Token holder count
   if(tokenSecurity.hasOwnProperty("holder_count") && tokenSecurity.holder_count !== null && tokenSecurity.holder_count !== "") {
     logResults.push({ 
       check: Number(tokenSecurity.holder_count) > 1000 ? Check.Pass : Check.Warning, 
@@ -209,9 +195,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // LP token holder number	lp_holder_count	It describes the number of LP token holders.	When "is_in_dex": "0", there will be no return.
-	// 	Example: "lp_holder_count": "4342".	
-	//	No return means no LP.	
+  // LP token holder count
   if(tokenSecurity.hasOwnProperty("lp_holder_count") && tokenSecurity.lp_holder_count !== null && tokenSecurity.lp_holder_count !== "") {
     logResults.push({ 
       check: Number(tokenSecurity.lp_holder_count) > 1000 ? Check.Pass : Check.Warning, 
@@ -221,7 +205,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // Creator Address	creator_address	It describes this contract's owner address.
+  // Creator Address
   if(tokenSecurity.hasOwnProperty("creator_address") && tokenSecurity.creator_address !== null && tokenSecurity.creator_address !== "") {
     logResults.push({ 
       check: Check.None, 
@@ -231,7 +215,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // Creator Balance	creator_balance	It describes the balance of the contract owner. Example:"owner_balance": 100000000.
+  // Creator Balance
   if(tokenSecurity.hasOwnProperty("creator_balance") && tokenSecurity.creator_balance !== null && tokenSecurity.creator_balance !== "") {
     logResults.push({ 
       check: Check.None, 
@@ -241,9 +225,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // Owner Address	owner_address	This contract's owner address. No value will be returned if the owner address is unknown. An empty sting will be returned if the contract has no owner.	(1) Will not be returned if "is_open_source" is 0.
-	//		(2) May not be returned if "is_proxy" is 1.
-	//		(3) Ownership is usually used to adjust the parameters and status of the contract, such as minting, modification of slippage, suspension of trading, setting blacklist, etc. When the contract's owner cannot be retrieved, is a black hole address, or does not have an owner, ownership-related functionality will most likely be disabled.
+  // Owner Address
   if(tokenSecurity.hasOwnProperty("owner_address") && tokenSecurity.owner_address !== null && tokenSecurity.owner_address !== "") {
     logResults.push({ 
       check: Check.None, 
@@ -253,7 +235,7 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
     });
   }
 
-  // Owner Balance	owner_balance	It describes the balance of the contract owner.	When "owner_address" returns empty, or no return, there will be no return.
+  // Owner Balance
   if(tokenSecurity.hasOwnProperty("owner_balance") && tokenSecurity.owner_balance !== null && tokenSecurity.owner_balance !== "") {
     logResults.push({ 
       check: Check.None, 
@@ -267,230 +249,220 @@ function analyzeTokenSecurity(tokenSecurity: any): LogResult[] {
 }
 
 export default function Chat() {
-  const [networkEndpointName, setNetworkEndpointName] = useState(networkEndpoints[0].networkEndpointName);
-  const [goPlusNetworkEndpointNumber, setGoPlusNetworkEndpointNumber] = useState(networkEndpoints[0].goPlusNetworkEndpointNumber);
   const [contractAddress, setContractAddress] = useState("");
   const [userQuery, setUserQuery] = useState("");
-  const [securityData, setSecurityData] = useState("");
   const [tokenName, setTokenName] = useState("");
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [logResults, setLogResults] = useState<LogResult[]>([]);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const networkId = '8453' // base chain
 
   return (
-  <div className="relative flex flex-col items-center justify-center min-h-screen bg-[#00325a] rounded p-4 pb-0">
-  <div className='w-full flex justify-center'>
-    <Image className="rounded-3xl" src="/logo.webp" alt="Logo" width={350} height={400}/>
-  </div>
-  <h1 className="text-lg text-[#ffbe1e] text-wrap w-1/2 text-center mb-8">ai rug check on the base network</h1>
-  <div className="bg-gradient-to-r from-[#014570] to-[#1ff3d4] mx-4 mt-4 w-2/4 items-stretch rounded-lg p-4 border-white border-4">
-    <div className="flex pt-6 px-6">
-      <input 
-        className="appearance-none bg-white-100 border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none rounded" 
-        name="contractAddress"
-        type="text" 
-        placeholder="Paste Token / Contract Address"
-        value={contractAddress}
-        onChange={(e) => {
-          const hexRegex = /^(0x)?[0-9a-fA-F]*$/;
-          if (hexRegex.test(e.target.value)) {
-            if(e.target.value.length > 2 && e.target.value.substring(0, 2) !== "0x") {
-              setContractAddress("0x" + e.target.value.toLowerCase());
-            } else {
-              setContractAddress(e.target.value.toLowerCase());
-            }
-          }
-        }}
-        />
-      <button 
-        className="flex-shrink-0 w-1/6 mx-2 bg-yellow-400 hover:bg-yellow-500 border-yellow-400 hover:border-yellow-500 text-sm border-4 text-gray-900 hover:text-white py-1 px-2 rounded" 
-        type="button"
-        onClick={async () => {
-          setIsDataLoading(true);
-          setTokenName("");
-          setTokenSymbol("");
-          setMessages([]);
-          setLogResults([]);
-          const queryParams = new URLSearchParams({
-            contractAddress,
-            goPlusNetworkEndpointNumber: String(goPlusNetworkEndpointNumber)
-          }).toString();
-    
-          const response = await fetch(`api/tokenSecurity-GoPlus?${queryParams}`, {
-              method: "GET",
-              headers: {
-                  "Content-Type": "application/json"
-              },
-          });
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-[#00325a] rounded p-4 pb-0">
+        <div className='w-full flex justify-center'>
+          <a href="/"><Image className="rounded-3xl" src="/logo.webp" alt="Logo" width={350} height={400}/></a>
+        </div>
+        <h1 className="text-lg text-[#ffbe1e] text-wrap w-1/2 text-center mb-6 -mt-3">ai rug check on the base network</h1>
+        <div className="bg-gradient-to-r from-[#014570] to-[#1ff3d4] mb-6 mt-12 w-2/4 items-stretch rounded-lg p-4 border-white border-4">
+          <div className="flex py-6 px-9">
+            <input 
+              className="appearance-none bg-white-100 border-none w-full text-gray-700 mr-3 px-3 leading-tight focus:outline-none rounded" 
+              name="contractAddress"
+              type="text" 
+              placeholder="be a smart degen) enter token address"
+              value={contractAddress}
+              onChange={(e) => {
+                const hexRegex = /^(0x)?[0-9a-fA-F]*$/;
+                if (hexRegex.test(e.target.value)) {
+                  if(e.target.value.length > 2 && e.target.value.substring(0, 2) !== "0x") {
+                    setContractAddress("0x" + e.target.value.toLowerCase());
+                  } else {
+                    setContractAddress(e.target.value.toLowerCase());
+                  }
+                }
+              }}
+              />
+            <button 
+              className="flex-shrink-0 w-1/6 mx-2 bg-yellow-400 hover:bg-yellow-500 border-yellow-400 hover:border-yellow-500 text-sm border-4 text-gray-900 hover:text-white py-1 px-2 rounded" 
+              type="button"
+              onClick={async () => {
+                setIsDataLoading(true);
+                setTokenName("");
+                setTokenSymbol("");
+                setMessages([]);
+                setLogResults([]);
+                const queryParams = new URLSearchParams({
+                  contractAddress,
+                  networkId
+                }).toString();
+          
+                const response = await fetch(`api/tokenSecurity-GoPlus?${queryParams}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
 
-          const tokenSecurity = await response.json();
-          console.log(tokenSecurity); 
+                const tokenSecurity = await response.json();
+                console.log(tokenSecurity); 
 
-          if (tokenSecurity.result[contractAddress] === undefined) {
-            setTokenName("CONTRACT NOT FOUND");
-            setTokenSymbol("");
-            setLogResults([]);
-          } else {
-            setSecurityData(JSON.stringify(tokenSecurity.result[contractAddress]));
-            setTokenName(tokenSecurity.result[contractAddress].token_name);
-            setTokenSymbol(tokenSecurity.result[contractAddress].token_symbol);
-            console.log(tokenSecurity.result[contractAddress].slippage_modifiable);
-            setLogResults(analyzeTokenSecurity(tokenSecurity.result[contractAddress]));
-            console.log(analyzeTokenSecurity(logResults));
+                if (tokenSecurity.result[contractAddress] === undefined) {
+                  setTokenName("CONTRACT NOT FOUND");
+                  setTokenSymbol("");
+                  setLogResults([]);
+                } else {
+                  setTokenName(tokenSecurity.result[contractAddress].token_name);
+                  setTokenSymbol(tokenSecurity.result[contractAddress].token_symbol);
+                  console.log(tokenSecurity.result[contractAddress].slippage_modifiable);
+                  setLogResults(analyzeTokenSecurity(tokenSecurity.result[contractAddress]));
+                  console.log(analyzeTokenSecurity(logResults));
 
-            const query = `What is the likelyhood of ${contractAddress} being a rug pull?`;
-            const queryParams = new URLSearchParams({
-              query: query,
-              token_address: contractAddress,
-            }).toString();
-      
-            const response = await fetch(`api/chat-ollama?${queryParams}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-            });
-  
-            const ai_response = await response.json();
-            console.log(ai_response); 
-            const answer = ai_response.answer;
-            const messages = [];
-            messages.push({ role: 'user', content: query});
-            messages.push({ role: 'ai', content: answer});
-            setMessages(messages);
-          }
-          setIsDataLoading(false); 
-        }}
-        >
-        Check
-      </button>
-    </div>
-    <br />
-  </div>
-
-  <div className='flex flex-row items-center justify-center bg-gradient-to-b from-[#00325a] to-[#1ff3d4] p-4 pb-10 w-screen h-screen'>
-    <div className='bg-gradient-to-r from-[#014570] to-[#00325a] mx-4 mt-4 w-1/4 items-stretch rounded-lg border-white border-4 p-4 h-full'>
-           <h1 className="text-1xl text-white">GoPlus INFO (Heuristic Based Analysis) </h1>
-           <div className='h-px bg-white my-4'></div>
-           <div className="flex justify-center items-center text-white">
-             {tokenSymbol.length > 0 && 
-               <h2 className='text-2xl'>Token: {tokenName}</h2>
-             }
-             {tokenSymbol.length == 0 && 
-               <h2 className='text-2xl text-red-500'>{tokenName}</h2>
-             }
-             {tokenSymbol.length > 0 && tokenName !== tokenSymbol &&
-               <h2 className='text-2xl text-gray-500'> (Symbol: {tokenSymbol})</h2>
-             }
-           </div>
-             {logResults.sort((a, b) => {
-                 if (a.check !== b.check) {
-                   return a.check - b.check;
-                 }
-                 return a.description.localeCompare(b.description);
-               }).map((logEntry, index) => (
-               <div key={index} className="flex justify-between items-center text-white">
-                 <div className="flex items-center">
-                   {logEntry.check === Check.Pass && (
-                     <span className="text-green-500 font-bold">&#10003;</span>
-                   )}
-                   {logEntry.check === Check.Fail && (
-                     <span className="text-red-500 font-bold">&#10005;</span>
-                   )}
-                   {logEntry.check === Check.Warning && (
-                     <span className="text-amber-500 font-bold">&#10005;</span>
-                   )}
-                   <div className="ml-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center cursor-pointer" title={logEntry.info}>i</div>
-                   <h2 className="text-1xl">{logEntry.description}</h2>
-                 </div>
-                 { (logEntry.check === Check.Pass || logEntry.check === Check.None) && (
-                   <h2 className="text-1xl text-green-500">{logEntry.value}</h2>
-                 )}
-                 {logEntry.check === Check.Fail && (
-                   <h2 className="text-1xl text-red-500">&#9888; {logEntry.value}</h2>
-                 )}
-                 {logEntry.check === Check.Warning && (
-                   <h2 className="text-1xl text-amber-500">&#9888; {logEntry.value}</h2>
-                 )}
-               </div>
-               ))}
-           </div>
-      <div className='bg-gradient-to-l from-[#014570] to-[#00325a] mx-4 mt-4 w-3/4 items-stretch rounded-lg border-white border-4 p-4 h-full'>
-      <h1 className="text-md text-white">Analysis from Llama3 Chatbot</h1>
-      <div className="h-px bg-white my-4"></div>
-        <div className="flex flex-col w-full pb-24 mx-auto stretch h-screen">
-          <div className='overflow-auto w-full'>
-            {messages.map((m, idx) => (
-              <div 
-                key={idx} 
-                className={`whitespace-pre-wrap text-gray-900 overflow-hidden ${
-                  m.role === "user"
-                    ? "bg-gray-300 p-3 m-2 rounded-lg w-full"
-                    : "bg-teal-100 p-3 m-2 rounded-lg w-full"
-                }`}
-              >
-                {m.role === 'user' ? 'User: ' : 'AI: '}
-                {m.content}
-              </div>
-            ))}
-            {isDataLoading && (
-              <div>
-                <span className='animate-bounce'>...</span>
-                <Image className="rounded-3xl" src="/loading.gif" alt="Logo" width={250} height={200}/>
-              </div>
-            )}
-
-          </div>
-          {logResults.length > 0 && (
-          <div className="bg-gradient-to-r from-[#014570] to-[#1ff3d4] mx-4 mt-4 w-2/4 items-stretch rounded-lg p-4 border-white border-4">
-            <div className="flex pt-6 px-6">
-              <input 
-                className="appearance-none bg-white-100 border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none rounded" 
-                name="userQuery"
-                type="text" 
-                placeholder="Ask a question about the contract"
-                value={userQuery}
-                onChange={(e) => {
-                  setUserQuery(e.target.value);
-                }}
-                />
-              <button 
-                className="flex-shrink-0 w-1/6 mx-2 bg-yellow-400 hover:bg-yellow-500 border-yellow-400 hover:border-yellow-500 text-sm border-4 text-gray-900 hover:text-white py-1 px-2 rounded" 
-                type="button"
-                onClick={async () => {
-                  setIsDataLoading(true);
-
-                  const query = `${userQuery}`;
+                  const query = `is this a scam  or rugpull`;
                   const queryParams = new URLSearchParams({
                     query: query,
                     token_address: contractAddress,
                   }).toString();
-              
+            
                   const response = await fetch(`api/chat-ollama?${queryParams}`, {
                       method: "GET",
                       headers: {
                           "Content-Type": "application/json"
                       },
                   });
-          
+        
                   const ai_response = await response.json();
-                  console.log(ai_response); 
                   const answer = ai_response.answer;
+                  const messages = [];
                   messages.push({ role: 'user', content: query});
                   messages.push({ role: 'ai', content: answer});
                   setMessages(messages);
-                  setIsDataLoading(false); 
-                }}
-                >
-                Ask
-              </button>
-            </div>
+                }
+                setIsDataLoading(false); 
+              }}
+              >
+              Check
+            </button>
           </div>
-          )}
         </div>
-      </div>
-  </div>
-</div>
-);
+
+        {tokenName !== '' && (<div className='flex flex-row items-center justify-center bg-gradient-to-b from-[#00325a] to-[#1ff3d4] p-4 pb-10 w-screen h-screen'>
+          <div className='bg-gradient-to-r from-[#014570] to-[#00325a] mx-4 mt-4 w-3/4 items-stretch rounded-lg border-white border-4 p-4 h-full'>
+            <h1 className="text-sm text-white">INFO</h1>
+            <div className='h-px bg-white my-4'></div>
+                <div className="flex justify-center items-center text-white my-9">
+                  {tokenSymbol.length > 0 && 
+                    <h2 className='text-2xl'>{tokenName}</h2>
+                  }
+                  {tokenSymbol.length > 0 && tokenName !== tokenSymbol &&
+                    <h2 className='text-md ml-1'> ({tokenSymbol})</h2>
+                  }
+                </div>
+                  {logResults.sort((a, b) => {
+                      if (a.check !== b.check) {
+                        return a.check - b.check;
+                      }
+                      return a.description.localeCompare(b.description);
+                    }).map((logEntry, index) => (
+                    <div key={index} className="flex justify-between w-[50%] mx-auto my-3 items-center text-white">
+                      <div className="flex items-center">
+                        {logEntry.check === Check.Pass && (
+                          <span className="text-green-500 font-bold mr-3">&#10003;</span>
+                        )}
+                        {logEntry.check === Check.Fail && (
+                          <span className="text-red-500 font-bold mr-3">&#10005;</span>
+                        )}
+                        {logEntry.check === Check.Warning && (
+                          <span className="text-amber-500 font-bold mr-3">&#10005;</span>
+                        )}
+                        <h2 className="text-1xl">{logEntry.description}</h2>
+                      </div>
+                      { (logEntry.check === Check.Pass || logEntry.check === Check.None) && (
+                        <h2 className="text-1xl text-green-500">{logEntry.value}</h2>
+                      )}
+                      {logEntry.check === Check.Fail && (
+                        <h2 className="text-1xl text-red-500">&#9888; {logEntry.value}</h2>
+                      )}
+                      {logEntry.check === Check.Warning && (
+                        <h2 className="text-1xl text-amber-500">&#9888; {logEntry.value}</h2>
+                      )}
+                    </div>
+                    ))}
+                </div>
+            <div className='bg-gradient-to-l from-[#014570] to-[#00325a] mx-4 mt-4 w-3/4 items-stretch rounded-lg border-white border-4 p-4 h-full'>
+            <h1 className="text-sm text-white">BRC</h1>
+            <div className="h-px bg-white my-4"></div>
+              <div className="flex flex-col w-full pb-24 mx-auto stretch h-screen">
+                <div className='w-full'>
+                  {messages.map((m, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`whitespace-pre-wrap text-gray-900 overflow-hidden break-words ${
+                        m.role === "user"
+                          ? "text-gray-500 p-3 m-2 rounded-lg w-full"
+                          : "text-white p-3 m-2 rounded-lg w-full"
+                      }`}
+                    >
+                      {m.role === 'user' ? 'SmartDegen: ' : ''}
+                      {m.content}
+                    </div>
+                  ))}
+                  {isDataLoading && (
+                    <div>
+                      <span className='animate-bounce'>...</span>
+                    </div>
+                  )}
+
+                </div>
+                {logResults.length > 0 && (
+                <div className='relative bottom-0 w-full w-[80%] mx-auto'>
+                  <div className='flex justify-center items-center mt-12'>
+                    <input 
+                      className="w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl text-black outline-0"
+                      name="userQuery"
+                      type="text" 
+                      placeholder="Ask me anything but wen moon"
+                      value={userQuery}
+                      onChange={(e) => {
+                        setUserQuery(e.target.value);
+                      }}
+                      />
+                    <button 
+                      className="z-10 w-[6rem] -mt-8 -ml-12 bg-yellow-400 hover:bg-yellow-500 border-yellow-400 hover:border-yellow-500 text-sm border-4 text-gray-900 hover:text-white py-2 px-2 rounded" 
+                      type="button"
+                      onClick={async () => {
+                        setIsDataLoading(true);
+
+                        const query = `${userQuery}`;
+                        const queryParams = new URLSearchParams({
+                          query: query,
+                          token_address: contractAddress,
+                        }).toString();
+                    
+                        const response = await fetch(`api/chat-ollama?${queryParams}`, {
+                            method: "GET",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                        });
+                
+                        const ai_response = await response.json();
+                        console.log(ai_response); 
+                        const answer = ai_response.answer;
+                        messages.push({ role: 'user', content: query});
+                        messages.push({ role: 'ai', content: answer});
+                        setMessages(messages);
+                        setIsDataLoading(false); 
+                      }}
+                      >
+                      Ask
+                    </button>
+                  </div>
+                </div>
+                )}
+              </div>
+            </div>
+        </div>)}
+    </div>
+  );
 }

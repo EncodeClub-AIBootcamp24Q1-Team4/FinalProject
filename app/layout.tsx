@@ -18,8 +18,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         {children}
-        <footer className='text-center text-gray-300 pt-6'>
-          Encode Club | AI Bootcamp 24Q1 | TEAM4 Final Project
+        <footer className='text-center text-gray-300 pt-16'>
+          Encode Club AI Bootcamp 24Q1 - TEAM4 Final Project
         </footer>
       </body>
     </html>

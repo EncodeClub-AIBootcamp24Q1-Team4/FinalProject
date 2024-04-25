@@ -1,8 +1,8 @@
-POST http://localhost:8080/check HTTP/1.1
+POST http://localhost:8080/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "query": "What is the likelyhood  of 0xb5C65358ba679622B174b7b2d1e5FB18199aDb00 a rug pull?",
+    "query": "is this a scam or rugpull",
     "token_address": "0xb5C65358ba679622B174b7b2d1e5FB18199aDb00"
 }
 

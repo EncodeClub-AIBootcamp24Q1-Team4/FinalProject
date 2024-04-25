@@ -18,13 +18,7 @@ export async function GET(req: Request) {
         });
     }
 
-    // POST http://localhost:8080/check HTTP/1.1
-    // Content-Type: application/json
-    // {
-    //     "query": "What is the likelyhood of 0xb5C65358ba679622B174b7b2d1e5FB18199aDb00 being a rug pull?",
-    //     "token_address": "0xb5C65358ba679622B174b7b2d1e5FB18199aDb00"
-    // }
-    const api_url = `http://localhost:8080/check`;
+    const api_url = `http://localhost:8080/`;
     const headers = {
         accept: '*/*',
         'Content-Type': 'application/json'

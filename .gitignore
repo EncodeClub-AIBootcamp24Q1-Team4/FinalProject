@@ -155,5 +155,3 @@ next-env.d.ts
 
 bun.lockb
 .venv
-extensions.json
-package-lock.json
