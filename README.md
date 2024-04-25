@@ -28,7 +28,7 @@ After you are setup with the database, you can install the schema (and optionall
 
 To refresh the data in the database from GoPlusLabs.io, simply visit this URL after you start the NextJS server in the instructions below.  Note that the webpage will take a long time to return as this is an expensive operation.
 
-    http://localhost:3000/api/chat-openai   <TODO -- need to confirm this is the correct endpoint>
+    http://localhost:3000/api/chat-openai
 
 ### Ollama with Llama 3 LLM
 
