@@ -17,12 +17,12 @@ load_dotenv()
 app = Flask( __name__ )
 
 # folder_path = "db" #! [TEMP] disabled for development
-cached_llm = Ollama(base_url=os.getenv("OLLAMA_HOST"), model="llama3", temperature=0.75)
+cached_llm = Ollama(base_url=os.getenv("OLLAMA_HOST"), model="llama3", temperature=0.85)
 
 embedding = FastEmbedEmbeddings()
 
 text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=2048, chunk_overlap=80, length_function=len, is_separator_regex=False
+    chunk_size=8192, chunk_overlap=80, length_function=len, is_separator_regex=False
 )
 
 raw_prompt = PromptTemplate.from_template(
@@ -81,8 +81,10 @@ def checkPost():
     # Split the documents into chunks
     texts = text_splitter.split_documents(documents)
 
-    for chunk in preload_chunks:
-        texts.extend(chunk)
+    # for chunk in preload_chunks:
+    #     texts.extend(chunk)
+
+    print(f"Number of chunks: {len(texts)}")
 
     # Create the vector store
     # vectorstore = Chroma.from_documents(texts, embedding, persist_directory=folder_path)
