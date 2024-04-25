@@ -20,7 +20,7 @@ Possible rug coin
 
 ### Postgres database
 
-The Postgres database is used to cache some data from the goPlusLabs.io webservice.  You can install Postgres from following the instructions and downloads avaialble on the Postgres website here: https://www.postgresql.org/download/ .  BasedRugChat was tested on Postgres version 16.2.
+The Postgres database is used to cache some data from the goPlusLabs.io webservice.  You can install Postgres from following the instructions and downloads avaialble on the Postgres website here: https://www.postgresql.org/download/ .  BasedRugChat was tested on Postgres version 16.2.  As an alternative option to installing locally, you can also run a cloud base solution here.  A free option that was tested with BasedRugChat can be found here: https://neon.tech/
 
 After the database is installed, it is also optional for you install PGAdmin.  The included backups of the data and schema were generated using PGAdmin 4 v8.5.  You can download this tool from here: https://www.pgadmin.org/download/ .
 
