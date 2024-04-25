@@ -1,6 +1,6 @@
-## Based Rug Chat - Encode AI Bootcamp Final Project 
-# AI Rug Check on the Base Network
-# By Brian Blank LMaGmf, Guy Cioffi 4KTBAl, Prasanna Malla nmv94F, Loren Adam n0e2ha
+# Based Rug Chat - Encode AI Bootcamp Final Project 
+## AI Rug Check on the Base Network
+## By Brian Blank LMaGmf, Guy Cioffi 4KTBAl, Prasanna Malla nmv94F, Loren Adam n0e2ha
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
