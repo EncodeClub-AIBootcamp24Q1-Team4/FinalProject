@@ -65,7 +65,7 @@ python ./app2.py
 
 Now you need to run the NextJS Node server interactively as shown below.  BasedRugChat was tested on Node v20.12.1.
 
-In the root directory, first create a .env file with the credentials to the Postgres database as follows:
+In the root directory of the project, first create a .env file with the credentials to the Postgres database as follows:
 
 ```bash
 PGHOST=<HOSTNAME>
